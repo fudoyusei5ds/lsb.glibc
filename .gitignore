@@ -1,4 +1,6 @@
-/src
+src/*
+!src/elf_makefile
+!src/makefile
 Makeconfig
 Rules
 elf_mk_src

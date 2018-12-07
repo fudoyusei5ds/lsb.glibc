@@ -38,7 +38,7 @@ csu-objpfx =
 rtld-LDFLAGS =
 ####################################################
 
-all:	$(modules-names:%=$(objpfx)%.so)	
+so:	$(modules-names:%=$(objpfx)%.so)	
 
 
 define build-module-helper

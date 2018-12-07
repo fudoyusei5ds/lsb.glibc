@@ -20,3 +20,5 @@ so的生成主要有以下几点:
 3. 如 testobj1.so-no-z-defs = yes 设置符号  
 
 提取之后改名为elf_makefile, 同时加上一些其他命令
+
+
