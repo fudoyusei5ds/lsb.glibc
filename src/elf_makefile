@@ -1,5 +1,7 @@
 objpfx=./
 libdl=-ldl
+libm=-lm
+libdl=-ldl
 
 modules-names=testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
 		testobj1_1 failobj constload2 constload3 unloadmod \
