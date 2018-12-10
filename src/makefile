@@ -62,7 +62,6 @@ $(modules-names:%=$(objpfx)%.so): $(objpfx)%.so: \
 	$(build-module)
 endif
 
-
 $(modules-names:%=$(objpfx)%.os): $(objpfx)%.os: \
 		$(objpfx)%.c
 	$(compile-command.c) -fPIC
