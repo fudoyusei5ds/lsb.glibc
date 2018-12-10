@@ -38,7 +38,13 @@ csu-objpfx =
 rtld-LDFLAGS =
 ####################################################
 
-so:	$(modules-names:%=$(objpfx)%.so)	
+so:	$(modules-names:%=$(objpfx)%.so)\
+	$(patsubst %,$(objpfx)%.so,$(tlsmod17a-modules))\
+	$(patsubst %,$(objpfx)%.so,$(tlsmod18a-modules))
+	# $(objpfx)tst-initorder2a.so
+	# $(objpfx)tst-initorder2b.so
+	# $(objpfx)tst-initorder2c.so
+	# $(objpfx)tst-initorder2d.so	
 
 
 define build-module-helper
