@@ -19,6 +19,9 @@ so的生成主要有以下几点:
 2. 如 LDFLAGS-tst-initorder2a.so = $(no-as-needed) 类型的参数设置
 3. 如 testobj1.so-no-z-defs = yes 设置符号  
 
-提取之后改名为elf_makefile, 同时加上一些其他命令
+提取之后改名为elf_makefile, 同时加上一些其他命令  
+之后将makefile复制到目录下, 运行make so编译生成so  
 
+#### 4. 生成glibc的测试用例
+同上, 首先需获取测试用例的列表, 然后从源码文件中将测试用例的源码复制到testsrc/目录下  
 
