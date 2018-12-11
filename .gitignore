@@ -5,4 +5,4 @@ Makeconfig
 Rules
 elf_mk_src
 .vscode/
-testsrc/*
+tstsrc/*
