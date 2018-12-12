@@ -1,5 +1,6 @@
 src/*
-!src/elf_makefile
+!src/elf_so.mk 
+!src/elf_tst.mk 
 !src/makefile
 Makeconfig
 Rules

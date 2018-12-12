@@ -1,7 +1,8 @@
-# 包含生成so的makefile
-include ./elf_so.mk
-# 包含生成测试用例的makefile
-include ./elf_tst.mk
+# 指定动态链接库
+objpfx = ./
+libdl = -ldl
+libm = -lm
+libdl = -ldl
 
 ####################
 
@@ -21,10 +22,6 @@ compile-mkdep-flags = -MD -MP -MF $@.dt -MT $@
 OUTPUT_OPTION = -o $@
 compile.c = gcc $< -D_GNU_SOURCE -c $(CFLAGS) $(CPPFLAGS) # 这里需要指定宏定义
 compile-command.c = $(compile.c) $(OUTPUT_OPTION) $(compile-mkdep-flags)
-
-$(modules-names:%=$(objpfx)%.os): $(objpfx)%.os: \
-		$(objpfx)%.c
-	$(compile-command.c)
 
 ####################
 
@@ -46,7 +43,7 @@ rtld-LDFLAGS =	# 用于指定动态链接器
 # rpath-link 用于设置链接库时所需依赖库的路径, 因为在生成测试用例用so时, 不需要其他的路径, 因此设置为当前目录
 rpath-link = ./
 define build-module-helper
-gcc -shared -static-libgcc $(sysdep-LDFLAGS) $(rtld-LDFLAGS) \
+$(LINK.o) -shared -static-libgcc $(sysdep-LDFLAGS) $(rtld-LDFLAGS) \
 	  $(if $($(@F)-no-z-defs)$(no-z-defs),,-Wl,-z,defs) \
 	  $(load-map-file) \
 	  $(LDFLAGS.so) $(LDFLAGS-$(@F:%.so=%).so) \
@@ -57,9 +54,12 @@ shlib-lds-flags =
 # link-libc-args = ?
 no-whole-archive = -Wl,--no-whole-archive
 whole-archive = -Wl,--whole-archive
+as-needed := -Wl,--as-needed
+no-as-needed := -Wl,--no-as-needed
 # 检查依赖文件中是否包含_pic.a结尾的文件, 如果有, 则在该位置前后加上whole-archive与no-whole-archive
-# 这个变量和测试用例的生成没什么关系, 因此先注释掉
-build-module-helper-objlist = #\
+# 这个变量和测试用例的生成没什么关系, 因此先注释掉, 只保留依赖选项的文件
+
+build-module-helper-objlist = $^#\
 	$(patsubst %_pic.a,$(whole-archive) %_pic.a $(no-whole-archive),\
 		   $(filter-out %.lds $(map-file) $(+preinit) $(+postinit) \
 				$(link-libc-deps),$^))
@@ -69,14 +69,14 @@ $(build-module-helper) -o $@ $(shlib-lds-flags) \
 		$(build-module-objlist)
 endef
 
-# 链接生成so的语句
-# 这里将所有modules都生成, 实际运用时, 需要进行筛选
 shlib-lds = 
-ifdef modules-names
-$(modules-names:%=$(objpfx)%.so): $(objpfx)%.so: \
-		$(objpfx)%.os $(shlib-lds) $(link-libs-deps)
-	$(build-module)
-endif
+
+####################
+
+# 包含生成so的makefile
+include ./elf_so.mk
+# 包含生成测试用例的makefile
+include ./elf_tst.mk
 
 ####################
 
@@ -87,4 +87,16 @@ clean:
 	rm *dt
 
 # 生成动态链接库
-so:	$(patsubst %,$(objpfx)%.so,$(modules-names) $(modules-extra-names))\
+so:	$(patsubst %,$(objpfx)%.so,$(modules-extra-names) $(modules-names))
+
+# 编译源码
+$(modules-names:%=$(objpfx)%.os): $(objpfx)%.os: \
+		$(objpfx)%.c
+	$(compile-command.c)
+
+# 链接生成so
+ifdef modules-names
+$(modules-names:%=$(objpfx)%.so): $(objpfx)%.so: \
+		$(objpfx)%.os $(shlib-lds) $(link-libs-deps)
+	$(build-module)
+endif
