@@ -19,7 +19,9 @@ so的生成主要有以下几点:
 2. 如 LDFLAGS-tst-initorder2a.so = $(no-as-needed) 类型的参数设置
 3. CFLAGS-
 4. 如 testobj1.so-no-z-defs = yes 设置符号  
-5. 还有CPPFLAGS-等类型, 这里暂时不考虑 
+5. LDLIBS- 此类参数用于C++测试用例
+
+还有CPPFLAGS-等类型, 这里暂时不考虑 
 
 提取之后改名为elf_makefile, 同时加上一些其他命令  
 之后将makefile复制到目录下, 运行make so编译生成so  
