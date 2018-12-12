@@ -17,7 +17,9 @@ so的生成主要有以下几点:
 需要Makefile中提取出对应的语句, 放入自己的Makefile中:   
 1. 如 $(objpfx)tst-initorder2a.so: $(objpfx)tst-initorder2b.so 类型的依赖  
 2. 如 LDFLAGS-tst-initorder2a.so = $(no-as-needed) 类型的参数设置
-3. 如 testobj1.so-no-z-defs = yes 设置符号  
+3. CFLAGS-
+4. 如 testobj1.so-no-z-defs = yes 设置符号  
+5. 还有CPPFLAGS-等类型, 这里暂时不考虑 
 
 提取之后改名为elf_makefile, 同时加上一些其他命令  
 之后将makefile复制到目录下, 运行make so编译生成so  
@@ -25,4 +27,11 @@ so的生成主要有以下几点:
 #### 4. 生成glibc的测试用例
 同上, 首先需获取测试用例的列表, 然后从源码文件中将测试用例的源码复制到testsrc/目录下  
 运行mv_tst_src.py复制源码  
+在源码的makefile中, 有关测试用例的语句主要有如下几种  
+1. $(objpfx)tst-unique2: $(libdl) $(objpfx)tst-unique2mod1.so 指定生成测试用例时需要的so  
+2. $(objpfx)tst-unique2.out: $(objpfx)tst-unique2mod2.so 指定运行时所需的so  
+3. LDFLAGS-restest1 = -rdynamic 编译参数 
+4. tst-null-argv-ENV = LD_DEBUG=all LD_DEBUG_OUTPUT=$(objpfx)tst-null-argv.debug.out 指定运行测试用例的参数  
+5. CFLAGS-tst-align.c = $(stack-align-test-flags) 编译参数  
+
 
