@@ -8,3 +8,4 @@ elf_mk_src
 .vscode/
 tstsrc/*
 Makerules
+test/*
