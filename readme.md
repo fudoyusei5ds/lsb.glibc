@@ -1,39 +1,20 @@
-### 将glibc elf库的测试用例移植到lsb中
+## 将glibc elf库的测试用例移植到lsb中
 
-#### 1. 统计elf库的测试用例
+### 1. 统计elf库的测试用例
 有两个方法:  
 1. 打开 elf/Makefile 文件, 其中test变量中储存的就是测试用例
 2. 通过统计glibc测试之后的测试结果文件, 获取测试用例
 
-#### 2. 文件目录
-因为elf库的测试用例之间存在复杂的相互依赖关系, 所以需要把elf库的所有测试用例的源码复制到一个目录下, 而用于glibc的转接口则放在其余目录下
+### 2. 文件目录
+因为elf库的测试用例之间存在复杂的相互依赖关系, 所以需要把elf库的所有测试用例的源码复制到src/, 而用于glibc的转接口则放在其余目录下
 
-#### 3. 生成测试用so
-首先运行mv_so_src.py脚本来移动so库源码.  
-so的生成主要有以下几点:  
-1. 依赖: 有些so库的生成依赖于其他so.  
-2. 编译选项: so库在生成时会选择不同的编译选项.  
+### 3. 复制源码
+运行mv_so_src.py和mv_tst_src.py将测试用例的源代码复制到src/
 
-需要Makefile中提取出对应的语句, 放入自己的Makefile中:   
-1. 如 $(objpfx)tst-initorder2a.so: $(objpfx)tst-initorder2b.so 类型的依赖  
-2. 如 LDFLAGS-tst-initorder2a.so = $(no-as-needed) 类型的参数设置
-3. CFLAGS-
-4. 如 testobj1.so-no-z-defs = yes 设置符号  
-5. LDLIBS- 此类参数用于C++测试用例
+### 4. 提取makefile语句
+运行mk_tst.py来从glibc的makefile中提取跟测试用例相关的代码, 然后将生成的elf_tst.mk复制到src/
 
-还有CPPFLAGS-等类型, 这里暂时不考虑 
-
-提取之后改名为elf_makefile, 同时加上一些其他命令  
-之后将makefile复制到目录下, 运行make so编译生成so  
-
-#### 4. 生成glibc的测试用例
-同上, 首先需获取测试用例的列表, 然后从源码文件中将测试用例的源码复制到testsrc/目录下  
-运行mv_tst_src.py复制源码  
-在源码的makefile中, 有关测试用例的语句主要有如下几种  
-1. $(objpfx)tst-unique2: $(libdl) $(objpfx)tst-unique2mod1.so 指定生成测试用例时需要的so  
-2. $(objpfx)tst-unique2.out: $(objpfx)tst-unique2mod2.so 指定运行时所需的so  
-3. LDFLAGS-restest1 = -rdynamic 编译参数 
-4. tst-null-argv-ENV = LD_DEBUG=all LD_DEBUG_OUTPUT=$(objpfx)tst-null-argv.debug.out 指定运行测试用例的参数  
-5. CFLAGS-tst-align.c = $(stack-align-test-flags) 编译参数  
-
-
+### 5. 生成makefile
+切换到src/ 运行make生成测试用例, 可能有些测试用例会出错, 需要根据报错信息进行具体的修改. 最终生成所有测试用例.  
+需要注意的是, 有些测试用例并不是c文件而是c++文件,对于这种情况需要之后一一进行移植.  
+有些测试用例使用shell语句来执行, 对于这种测试用例, 需要具体分析.  

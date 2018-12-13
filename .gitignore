@@ -7,3 +7,4 @@ Rules
 elf_mk_src
 .vscode/
 tstsrc/*
+Makerules
