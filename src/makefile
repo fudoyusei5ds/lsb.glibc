@@ -74,7 +74,7 @@ shlib-lds =
 ####################
 
 # 包含生成so的makefile
-include ./elf_so.mk
+# include ./elf_so.mk
 # 包含生成测试用例的makefile
 include ./elf_tst.mk
 
@@ -100,3 +100,15 @@ $(modules-names:%=$(objpfx)%.so): $(objpfx)%.so: \
 		$(objpfx)%.os $(shlib-lds) $(link-libs-deps)
 	$(build-module)
 endif
+
+# 生成测试用例
+tst:	$(tests)
+
+# 编译源码
+$(tests:%=$(objpfx)%.os): $(objpfx)%.os: \
+		$(objpfx)%.c
+	$(compile-command.c)
+# 链接目标文件
+$(tests:%=$(objpfx)%): $(objpfx)%: \
+		$(objpfx)%.os
+	gcc 
