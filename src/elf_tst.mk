@@ -1,6 +1,34 @@
-tests = 
-
-
+tests = tst-tls1 tst-tls2 tst-tls9 tst-leaks1 \
+	tst-array1 tst-array2 tst-array3 tst-array4 tst-array5 \
+	tst-auxv
+tests-static = tst-tls1-static tst-tls2-static tst-stackguard1-static \
+	       tst-leaks1-static tst-array1-static tst-array5-static \
+	       tst-ptrguard1-static tst-dl-iter-static \
+	       tst-tlsalign-static tst-tlsalign-extern-static
+tests-static += tst-tls9-static
+tests += loadtest restest1 preloadtest loadfail multiload origtest resolvfail \
+	 constload1 order noload filter unload \
+	 reldep reldep2 reldep3 reldep4 nodelete nodelete2 \
+	 nodlopen nodlopen2 neededtest neededtest2 \
+	 neededtest3 neededtest4 unload2 lateglobal initfirst global \
+	 restest2 next dblload dblunload reldep5 reldep6 reldep7 reldep8 \
+	 circleload1 tst-tls3 tst-tls4 tst-tls5 tst-tls6 tst-tls7 tst-tls8 \
+	 tst-tls10 tst-tls11 tst-tls12 tst-tls13 tst-tls14 tst-tls15 \
+	 tst-tls16 tst-tls17 tst-tls18 tst-tls19 tst-tls-dlinfo \
+	 tst-align tst-align2 $(tests-execstack-$(have-z-execstack)) \
+	 tst-dlmodcount tst-dlopenrpath tst-deep1 \
+	 tst-dlmopen1 tst-dlmopen2 tst-dlmopen3 \
+	 unload3 unload4 unload5 unload6 unload7 unload8 tst-global1 order2 \
+	 tst-audit1 tst-audit2 tst-audit8 tst-audit9 \
+	 tst-stackguard1 tst-addr1 tst-thrlock \
+	 tst-unique1 tst-unique2 \
+	 tst-initorder tst-initorder2 tst-relsort1 tst-null-argv \
+	 tst-ptrguard1 tst-tlsalign tst-tlsalign-extern tst-nodelete-opened \
+	 tst-nodelete2 tst-audit11 tst-audit12
+tests += tst-dlopen-aout
+tests += tst-protected1a tst-protected1b
+tests-pie += tst-pie1 tst-pie2
+tests-pie += vismain
 
 
 

@@ -101,14 +101,35 @@ $(modules-names:%=$(objpfx)%.so): $(objpfx)%.so: \
 	$(build-module)
 endif
 
+####################
+
 # 生成测试用例
-tst:	$(tests)
+tst:	$(tests) $(tests-static) $(tests-pie)
 
 # 编译源码
 $(tests:%=$(objpfx)%.os): $(objpfx)%.os: \
 		$(objpfx)%.c
 	$(compile-command.c)
+
 # 链接目标文件
 $(tests:%=$(objpfx)%): $(objpfx)%: \
 		$(objpfx)%.os
-	gcc 
+	gcc -o $@ $(LDFLAGS-$(@F)) $^
+
+$(tests-static:%=$(objpfx)%): $(objpfx)%: \
+		$(objpfx)%.os
+	gcc -static -o $@ $(LDFLAGS-$(@F)) $^
+
+$(tests-pie:%=$(objpfx)%): $(objpfx)%: \
+		$(objpfx)%.os
+	gcc -pie -Wl,-O1 -o $@ $(LDFLAGS-$(@F)) $^
+
+	
+#####################
+
+# 生成makefile
+
+mk: $(patsubst %,%.ph,$(tests) $(tests-static) $(tests-pie))
+
+$(patsubst %,%.ph,$(tests) $(tests-static) $(tests-pie)):
+	python3 ../mk_mf.py $(patsubst %.ph,%,$@) $($(patsubst %.ph,%,$@)-ENV) $($(patsubst %.ph,%,$@)-ARGS)
