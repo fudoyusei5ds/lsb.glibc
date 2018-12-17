@@ -114,17 +114,19 @@ $(tests:%=$(objpfx)%.os): $(objpfx)%.os: \
 # 链接目标文件
 $(tests:%=$(objpfx)%): $(objpfx)%: \
 		$(objpfx)%.os
-	gcc -o $@ $(LDFLAGS-$(@F)) $^
+	gcc -Wl,--rpath=../../../src/ -o $@ $(LDFLAGS-$(@F)) $^
 
 $(tests-static:%=$(objpfx)%): $(objpfx)%: \
 		$(objpfx)%.os
-	gcc -static -o $@ $(LDFLAGS-$(@F)) $^
+	gcc -Wl,--rpath=../../../src/ -static -o $@ $(LDFLAGS-$(@F)) $^
 
 $(tests-pie:%=$(objpfx)%): $(objpfx)%: \
 		$(objpfx)%.os
-	gcc -pie -Wl,-O1 -o $@ $(LDFLAGS-$(@F)) $^
+	gcc -Wl,--rpath=../../../src/ -pie -Wl,-O1 -o $@ $(LDFLAGS-$(@F)) $^
 
-	
+cleantst:
+	rm $(tests) $(tests-static) $(tests-pie) 
+
 #####################
 
 # 生成makefile
@@ -132,4 +134,4 @@ $(tests-pie:%=$(objpfx)%): $(objpfx)%: \
 mk: $(patsubst %,%.ph,$(tests) $(tests-static) $(tests-pie))
 
 $(patsubst %,%.ph,$(tests) $(tests-static) $(tests-pie)):
-	python3 ../mk_mf.py $(patsubst %.ph,%,$@) $($(patsubst %.ph,%,$@)-ENV) $($(patsubst %.ph,%,$@)-ARGS)
+	python3 ../mk_mf.py $(patsubst %.ph,%,$@) $(firstword $($(patsubst %.ph,%,$@)-ENV) 0) $(firstword $($(patsubst %.ph,%,$@)-ARGS) 0)
