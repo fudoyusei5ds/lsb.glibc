@@ -74,7 +74,7 @@ shlib-lds =
 ####################
 
 # 包含生成so的makefile
-include ./elf_so.mk
+# include ./elf_so.mk
 # 包含生成测试用例的makefile
 include ./elf_tst.mk
 
@@ -100,3 +100,38 @@ $(modules-names:%=$(objpfx)%.so): $(objpfx)%.so: \
 		$(objpfx)%.os $(shlib-lds) $(link-libs-deps)
 	$(build-module)
 endif
+
+####################
+
+# 生成测试用例
+tst:	$(tests) $(tests-static) $(tests-pie)
+
+# 编译源码
+$(tests:%=$(objpfx)%.os): $(objpfx)%.os: \
+		$(objpfx)%.c
+	$(compile-command.c)
+
+# 链接目标文件
+$(tests:%=$(objpfx)%): $(objpfx)%: \
+		$(objpfx)%.os
+	gcc -Wl,--rpath=../../../src/ -o $@ $(LDFLAGS-$(@F)) $^
+
+$(tests-static:%=$(objpfx)%): $(objpfx)%: \
+		$(objpfx)%.os
+	gcc -Wl,--rpath=../../../src/ -static -o $@ $(LDFLAGS-$(@F)) $^
+
+$(tests-pie:%=$(objpfx)%): $(objpfx)%: \
+		$(objpfx)%.os
+	gcc -Wl,--rpath=../../../src/ -pie -Wl,-O1 -o $@ $(LDFLAGS-$(@F)) $^
+
+cleantst:
+	rm $(tests) $(tests-static) $(tests-pie) 
+
+#####################
+
+# 生成makefile
+
+mk: $(patsubst %,%.ph,$(tests) $(tests-static) $(tests-pie))
+
+$(patsubst %,%.ph,$(tests) $(tests-static) $(tests-pie)):
+	python3 ../mk_mf.py $(patsubst %.ph,%,$@) $(firstword $($(patsubst %.ph,%,$@)-ENV) 0) $(firstword $($(patsubst %.ph,%,$@)-ARGS) 0)
