@@ -9,3 +9,4 @@ elf_mk_src
 tstsrc/*
 Makerules
 test/*
+tst/*
